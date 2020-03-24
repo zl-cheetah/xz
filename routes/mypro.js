@@ -51,10 +51,16 @@ router.get("/deluser", function(req, res){
     var sql = "delete from xz_user where uid=?"
     pool.query(sql,[$uid],function(err, result){
         if(err) throw err;
-        //1.删除成功
+        //1==删除成功
         res.send("1");
     });
 });
+//修改路径 post
+
+router.get('/updateuser', function(req, res){
+    res.send('asdf');
+});
+
 
 //导出路由器
 module.exports = router;
