@@ -55,11 +55,27 @@ router.get("/deluser", function(req, res){
         res.send("1");
     });
 });
-//修改路径 post
 
-router.get('/updateuser', function(req, res){
-    res.send('asdf');
+//查询用户 get
+router.get("/query", function(req, res){
+    var $uid = req.query.uid;
+    if(!$uid){
+        res.send("uid 不存在");
+        return;
+    }
+    var sql = "select * from xz_user where id=?";
+
+    pool.query(sql, [$uid], function(err, result){
+        if(result.length > 0){
+            res.send(result[0]);
+        } else {
+            res.send("没有查到用户信息");
+        }
+
+    });
 });
+
+//修改路径 post
 
 
 //导出路由器
