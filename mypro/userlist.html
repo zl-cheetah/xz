@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>userlist</title>
+</head>
+<body onload="getUserList()">
+    <table border="1px" width="800px">
+        <thead>
+            <tr>
+                <th>登录名称</th>
+                <th>电子邮箱</th>
+                <th>联系方式</th>
+                <th>真实姓名</th>
+                <th>用户性别</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+
+        <tbody id="mybody"></tbody>
+    </table>
+    <script>
+        function getUserList(){
+            //1.创建xhr对象
+            var xhr = new XMLHttpRequest();
+            //4.绑定监听，获取响应
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4, xhr.status == 200){
+                    //result 保存的是json串
+                    var result = xhr.responseText;
+                    //把result json串转换为users json 数组
+                    var users = JSON.parse(result);
+                    //循环添加HTML
+                    //创建html的字符串变量，保存所有自动生成的tr>td*6
+                    var html = "";
+                    for(var i=0; i<users.length; i++){
+                        //在表格中显示的性别
+                        var show_g="";
+                        //判断数据库中的性别，1--男 0--女null--未知
+                        if(users[i].gender==1){
+                            show_g="男";
+                        } else if (users[i].gender==0){
+                            show_g="女";
+                        } else {
+                            show_g="待定";
+                        };
+                        html += `
+                        <tr>
+                            <td>${users[i].uname}</td>
+                            <td>${users[i].email}</td>
+                            <td>${users[i].phone}</td>
+                            <td>${users[i].user_name}</td>
+                            <td>${show_g}</td>
+                            <td>
+                            <a href="javascript:delUser(${users[i].uid})">删除</a>
+                            <a href="">修改</a>
+                            </td>
+                        </tr>
+                        `;
+                    }
+                    mybody.innerHTML = html;
+                }
+            };
+
+            //2.创建请求，打开连接
+            xhr.open("get","/mypro/userlist",true);
+            //3.发送请求
+            xhr.send(null);
+        };
+        //删除当前行用户,ajax get提交
+        function delUser(uid){
+            //1.获取xhr对象
+            var xhr = new XMLHttpRequest();
+            //4.
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4 && xhr.status == 200){
+                    var result = xhr.responseText;
+                    if(result == 1){
+                        alert("删除成功");
+                        getUserList();
+                    } else {
+                        alert("删除失败");
+                    }
+                };
+            };
+            //2.打开连接
+            xhr.open("get","/mypro/deluser?uid="+uid,true );
+            //发送请求
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
