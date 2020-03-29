@@ -63,10 +63,12 @@ router.get("/query", function(req, res){
         res.send("uid 不存在");
         return;
     }
-    var sql = "select * from xz_user where id=?";
+    var sql = "select * from xz_user where uid=?";
 
     pool.query(sql, [$uid], function(err, result){
-        if(result.length > 0){
+        //console.log(result);
+
+        if(result.length>0){
             res.send(result[0]);
         } else {
             res.send("没有查到用户信息");
@@ -77,6 +79,30 @@ router.get("/query", function(req, res){
 
 //修改路径 post
 
+router.post("/update",function(req, res){
+    var $uid = req.body.uid;
+    var $uname = req.body.uname;
+    var $email = req.body.email;
+    var $phone = req.body.phone;
+    var $user_name = req.body.user_name;
+    var $upwd = req.body.upwd;
+    var $gender = req.body.gender;
+    if(!$uid){res.send("id为空");return;}
+    if(!$email){res.send("邮箱为空");return;}
+    if(!$phone){res.send("联系方式为空");return;}
+    if(!$user_name){res.send("真实姓名为空");return;}
+    if(!$upwd){res.send("密码为空");return;}
+    if(!$gender){res.send("性别为空");return;}
+    if(!$uname){res.send("用户名为空");return;}
+
+    var sql = "update xz_user set uname=?,email=?,upwd=?,phone=?,user_name=?,gender=? where uid=?";
+    //pool 传参顺序，要与sql参数数据位置一样
+    pool.query(sql, [$uname, $email, $upwd, $phone, $user_name, $gender, $uid], function (err, result) {
+        if(err) throw err;
+        console.log(result);
+        res.send("alert('修改成功'); location.href = ('http://localhost:8080/userlist.html')");
+    } );
+});
 
 //导出路由器
 module.exports = router;
